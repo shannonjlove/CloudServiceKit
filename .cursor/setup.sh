@@ -66,7 +66,19 @@ if ! grep -q 'swiftly/env.sh' "$HOME/.bashrc" 2>/dev/null; then
 fi
 
 echo "==> Resolving Swift package dependencies (pinned by Package.resolved)"
+# `swift package resolve` rewrites Package.resolved with Linux-only transitive
+# deps (OAuthSwift pulls in swift-crypto, Swifter, Kanna, etc. on Linux). Preserve
+# the committed iOS/tvOS Package.resolved so the working tree stays clean.
+resolved_file="$REPO_ROOT/Package.resolved"
+resolved_backup=""
+if [ -f "$resolved_file" ]; then
+  resolved_backup="$(mktemp)"
+  cp "$resolved_file" "$resolved_backup"
+fi
 swift package resolve --package-path "$REPO_ROOT"
+if [ -n "$resolved_backup" ]; then
+  mv "$resolved_backup" "$resolved_file"
+fi
 
 echo "==> Swift toolchain ready"
 swift --version
