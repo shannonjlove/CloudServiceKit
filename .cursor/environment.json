@@ -1,0 +1,4 @@
+{
+  "name": "CloudServiceKit",
+  "install": "bash .cursor/setup.sh"
+}
