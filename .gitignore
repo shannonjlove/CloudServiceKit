@@ -88,3 +88,7 @@ fastlane/test_output
 # https://github.com/johnno1962/injectionforxcode
 
 iOSInjectionProject/
+
+# Local OAuth / rclone secrets for the example app.
+# Copy CloudConfiguration.example.plist to CloudConfiguration.plist and fill in values.
+Example/CloudServiceKitExample/CloudConfiguration.plist

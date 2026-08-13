@@ -11,6 +11,7 @@ Easy to integrate cloud service using Oauth2. Supported platforms:
 - [x] pCloud
 - [x] [115](https://www.yuque.com/115yun/open)
 - [x] [123](https://123yunpan.yuque.com/org-wiki-123yunpan-muaork/cr6ced)
+- [x] rclone (Remote Control / Web GUI)
 
 ## Requirements
 
@@ -41,42 +42,45 @@ dependencies: [
 
 ## Quick Start
 
-You can explore `CloudServiceKit` by running example. But first you should configure app information that cloud drive services provides, you can fulfill information in `CloudConfiguration.swift`.
+You can explore `CloudServiceKit` by running the example app. Open **Storage Connections** (the drive-plus button) and paste credentials for each provider. rclone is pre-wired to `https://rclone-mcp.shannonjlove.cloud`.
+
+OAuth app values can also be filled in `CloudConfiguration.swift`, or copied from `Example/CloudServiceKitExample/CloudConfiguration.example.plist` to `CloudConfiguration.plist` (gitignored).
 
 ```swift
 extension CloudConfiguration {
     
     static var aliyun: CloudConfiguration? {
-        // fulfill your aliyun app info
-        return nil
-    }
-
-    static var baidu: CloudConfiguration? {
-        // fulfill your baidu app info
-        return nil
-    }
-    
-    static var box: CloudConfiguration? {
-        return nil
-    }
-    
-    static var dropbox: CloudConfiguration? {
-        return nil
-    }
-    
-    static var googleDrive: CloudConfiguration? {
-        return nil
-    }
-    
-    static var oneDrive: CloudConfiguration? {
-        return nil
-    }
-    
-    static var pCloud: CloudConfiguration? {
-        return nil
+        CloudConfigurationStore.shared.configuration(for: .aliyunDrive)
     }
 }
 ```
+
+### Connect rclone remotes
+
+`RcloneServiceProvider` talks to an [rclone Remote Control](https://rclone.org/rc/) server (`rclone rcd` or `rclone rcd --rc-web-gui`). The RC server already holds your remotes (Google Drive, IDrive e2, Koofr, S3, …); the example Drive Browser lists them as folders.
+
+```swift
+let credential = URLCredential(user: "rc-user", password: "rc-pass", persistence: .permanent)
+let apiURL = URL(string: "https://rclone-mcp.shannonjlove.cloud")!
+let provider = RcloneServiceProvider(credential: credential, apiURL: apiURL)
+let vc = DriveBrowserViewController(provider: provider, directory: provider.rootItem)
+```
+
+Start a local RC/GUI server if you are not using LoveCloud:
+
+```bash
+rclone rcd --rc-web-gui --rc-addr :5572 --rc-user USER --rc-pass PASS
+```
+
+Then in the example app open **Storage Connections → rclone** and set:
+
+| Field | Value |
+| --- | --- |
+| Remote Control URL | `https://rclone-mcp.shannonjlove.cloud` or `http://127.0.0.1:5572` |
+| RC username | `--rc-user` (blank when using `--rc-no-auth`) |
+| RC password | `--rc-pass` (blank when using `--rc-no-auth`) |
+
+The example also allows local network HTTP (`NSAllowsLocalNetworking`) so a Tailscale or LAN rclone GUI works.
 
 ## Get Started
 
@@ -248,7 +252,8 @@ Here is the connector list that CloudServiceKit supported.
 - [x] DropboxConnector
 - [x] GoogleDriveConnector
 - [x] OneDriveConnector
-- [x] PCloudConnector 
+- [x] PCloudConnector
+- [x] RcloneConnector (HTTP basic auth against `rclone rcd`) 
 
 You can also create your own connector.
 

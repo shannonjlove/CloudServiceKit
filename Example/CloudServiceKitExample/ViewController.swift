@@ -40,12 +40,43 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         navigationItem.title = "CloudServiceKit"
+        navigationItem.rightBarButtonItem = UIBarButtonItem(
+            image: UIImage(systemName: "externaldrive.badge.plus"),
+            style: .plain,
+            target: self,
+            action: #selector(openStorageSettings)
+        )
         setupCollectionView()
         setupDataSource()
+        applyInitialSnapshot()
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleConfigurationChange),
+            name: CloudConfigurationStore.didChangeNotification,
+            object: nil
+        )
+    }
+    
+    @objc private func openStorageSettings() {
+        let vc = StorageSettingsViewController()
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    @objc private func handleConfigurationChange() {
         applyInitialSnapshot()
     }
 
     private func connect(_ drive: CloudDriveType) {
+        if drive == .rclone {
+            connectRclone()
+            return
+        }
+        
+        guard CloudConfigurationStore.shared.configuration(for: drive) != nil else {
+            presentMissingConfiguration(for: drive)
+            return
+        }
+        
         let connector = connector(for: drive)
 
         if drive == .drive115 {
@@ -113,7 +144,7 @@ class ViewController: UIViewController {
                         }
                     }
                 case .failure(let error):
-                    print(error)
+                    self.presentError(error)
                 }
             }
         }
@@ -121,53 +152,52 @@ class ViewController: UIViewController {
     }
     
     private func connector(for drive: CloudDriveType) -> CloudServiceConnector {
-        let message = "Please configure app info in CloudConfiguration.swift"
         let connector: CloudServiceConnector
         switch drive {
+        case .rclone:
+            let rclone = CloudConfigurationStore.shared.draft(for: .rclone)
+            connector = RcloneConnector(appId: rclone.appId, appSecret: rclone.appSecret, callbackUrl: rclone.redirectUrl)
         case .aliyunDrive:
-            assert(CloudConfiguration.aliyun != nil, message)
-            let aliyun = CloudConfiguration.aliyun!
+            let aliyun = CloudConfigurationStore.shared.draft(for: .aliyunDrive)
             connector = AliyunDriveConnector(appId: aliyun.appId, appSecret: aliyun.appSecret, callbackUrl: aliyun.redirectUrl)
             connector.customURLHandler = CustomOAuthWebViewController(callbackUrl: aliyun.redirectUrl)
         case .baiduPan:
-            assert(CloudConfiguration.baidu != nil, message)
-            let baidu = CloudConfiguration.baidu!
+            let baidu = CloudConfigurationStore.shared.draft(for: .baiduPan)
             connector = BaiduPanConnector(appId: baidu.appId, appSecret: baidu.appSecret, callbackUrl: baidu.redirectUrl)
         case .box:
-            assert(CloudConfiguration.box != nil, message)
-            let box = CloudConfiguration.box!
-            connector = BoxConnector(appId: box.appId, appSecret: box.appSecret, callbackUrl: box.appSecret)
+            let box = CloudConfigurationStore.shared.draft(for: .box)
+            connector = BoxConnector(appId: box.appId, appSecret: box.appSecret, callbackUrl: box.redirectUrl)
         case .dropbox:
-            assert(CloudConfiguration.dropbox != nil, message)
-            let dropbox = CloudConfiguration.dropbox!
-            connector = DropboxConnector(appId: dropbox.appId, appSecret: dropbox.appSecret, callbackUrl: dropbox.appSecret)
+            let dropbox = CloudConfigurationStore.shared.draft(for: .dropbox)
+            connector = DropboxConnector(appId: dropbox.appId, appSecret: dropbox.appSecret, callbackUrl: dropbox.redirectUrl)
         case .googleDrive:
-            assert(CloudConfiguration.googleDrive != nil, message)
-            let googledrive = CloudConfiguration.googleDrive!
+            let googledrive = CloudConfigurationStore.shared.draft(for: .googleDrive)
             connector = GoogleDriveConnector(appId: googledrive.appId, appSecret: googledrive.appSecret, callbackUrl: googledrive.redirectUrl)
         case .oneDrive:
-            assert(CloudConfiguration.oneDrive != nil, message)
-            let onedrive = CloudConfiguration.oneDrive!
+            let onedrive = CloudConfigurationStore.shared.draft(for: .oneDrive)
             connector = OneDriveConnector(appId: onedrive.appId, appSecret: onedrive.appSecret, callbackUrl: onedrive.redirectUrl)
         case .pCloud:
-            assert(CloudConfiguration.pCloud != nil, message)
-            let pcloud = CloudConfiguration.pCloud!
+            let pcloud = CloudConfigurationStore.shared.draft(for: .pCloud)
             connector = PCloudConnector(appId: pcloud.appId, appSecret: pcloud.appSecret, callbackUrl: pcloud.redirectUrl)
         case .drive115:
-            assert(CloudConfiguration.drive115 != nil, message)
-            let drive115 = CloudConfiguration.drive115!
+            let drive115 = CloudConfigurationStore.shared.draft(for: .drive115)
             connector = Drive115Connector(appId: drive115.appId, appSecret: drive115.appSecret, callbackUrl: drive115.redirectUrl)
         case .drive123:
-            assert(CloudConfiguration.drive123 != nil, message)
-            let drive123 = CloudConfiguration.drive123!
+            let drive123 = CloudConfigurationStore.shared.draft(for: .drive123)
             connector = Drive123Connector(appId: drive123.appId, appSecret: drive123.appSecret, callbackUrl: drive123.redirectUrl)
         }
         return connector
     }
     
-    private func provider(for driveType: CloudDriveType, credential: URLCredential) -> CloudServiceProvider {
+    private func provider(for driveType: CloudDriveType, credential: URLCredential, endpoint: String? = nil) -> CloudServiceProvider {
         let provider: CloudServiceProvider
         switch driveType {
+        case .rclone:
+            let urlString = endpoint
+                ?? CloudConfiguration.rclone?.redirectUrl
+                ?? CloudConfiguration.defaultRcloneURL
+            let apiURL = URL(string: urlString) ?? URL(string: CloudConfiguration.defaultRcloneURL)!
+            provider = RcloneServiceProvider(credential: credential, apiURL: apiURL)
         case .aliyunDrive:
             provider = AliyunDriveServiceProvider(credential: credential)
         case .baiduPan:
@@ -190,7 +220,59 @@ class ViewController: UIViewController {
         return provider
     }
     
+    private func connectRclone() {
+        let draft = CloudConfigurationStore.shared.draft(for: .rclone)
+        guard draft.isConfigured(for: .rclone), let apiURL = URL(string: draft.redirectUrl) else {
+            presentMissingConfiguration(for: .rclone)
+            return
+        }
+        let credential = URLCredential(user: draft.appId, password: draft.appSecret, persistence: .permanent)
+        let provider = RcloneServiceProvider(credential: credential, apiURL: apiURL)
+        provider.getCurrentUserInfo { [weak self] userResult in
+            guard let self = self else { return }
+            switch userResult {
+            case .success(let user):
+                let account = CloudAccount(type: .rclone,
+                                           username: draft.appId.isEmpty ? user.username : draft.appId,
+                                           oauthToken: draft.appSecret,
+                                           endpoint: draft.redirectUrl)
+                CloudAccountManager.shared.upsert(account)
+                self.applyInitialSnapshot()
+                let vc = DriveBrowserViewController(provider: provider, directory: provider.rootItem)
+                self.navigationController?.pushViewController(vc, animated: true)
+            case .failure(let error):
+                self.presentError(error, title: "Could not reach rclone")
+            }
+        }
+    }
+    
+    private func presentMissingConfiguration(for drive: CloudDriveType) {
+        let alert = UIAlertController(
+            title: "Configure \(drive.title)",
+            message: drive == .rclone
+                ? "Add the rclone Remote Control URL (and optional username/password) so this browser can list your remotes."
+                : "Add the OAuth app id, secret, and redirect URL for \(drive.title).",
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "Configure", style: .default, handler: { [weak self] _ in
+            let editor = CloudProviderConfigViewController(drive: drive)
+            self?.navigationController?.pushViewController(editor, animated: true)
+        }))
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        present(alert, animated: true)
+    }
+    
+    private func presentError(_ error: Error, title: String = "Error") {
+        let alert = UIAlertController(title: title, message: error.localizedDescription, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
+    }
+    
     private func connect(_ account: CloudAccount) {
+        if account.driveType == .rclone {
+            connectSavedRclone(account)
+            return
+        }
         let connector = connector(for: account.driveType)
         if let refreshToken = account.refreshToken, !refreshToken.isEmpty {
             // For BaiduPan, we only refresh access token when it expires
@@ -198,7 +280,7 @@ class ViewController: UIViewController {
                 let credential = URLCredential(user: account.username,
                                                password: account.oauthToken,
                                                persistence: .permanent)
-                let provider = provider(for: account.driveType, credential: credential)
+                let provider = provider(for: account.driveType, credential: credential, endpoint: account.endpoint)
                 provider.refreshAccessTokenHandler = { [weak self] callback in
                     guard let self = self else { return }
                     self.refreshAccessToken(with: refreshToken, connector: connector, account: account) { result in
@@ -223,12 +305,12 @@ class ViewController: UIViewController {
                         let credential = URLCredential(user: account.username,
                                                        password: token.credential.oauthToken,
                                                        persistence: .permanent)
-                        let provider = self.provider(for: account.driveType, credential: credential)
+                        let provider = self.provider(for: account.driveType, credential: credential, endpoint: account.endpoint)
                         
                         let vc = DriveBrowserViewController(provider: provider, directory: provider.rootItem)
                         self.navigationController?.pushViewController(vc, animated: true)
                     case .failure(let error):
-                        print(error)
+                        self.presentError(error)
                     }
                 }
             }
@@ -238,11 +320,26 @@ class ViewController: UIViewController {
             let credential = URLCredential(user: account.username,
                                            password: account.oauthToken,
                                            persistence: .permanent)
-            let provider = provider(for: account.driveType, credential: credential)
+            let provider = provider(for: account.driveType, credential: credential, endpoint: account.endpoint)
             let vc = DriveBrowserViewController(provider: provider, directory: provider.rootItem)
             self.navigationController?.pushViewController(vc, animated: true)
         }
         self.connector = connector
+    }
+    
+    private func connectSavedRclone(_ account: CloudAccount) {
+        let config = CloudConfigurationStore.shared.draft(for: .rclone)
+        let user = config.appId.isEmpty ? account.username : config.appId
+        let password = config.appSecret.isEmpty ? account.oauthToken : config.appSecret
+        let endpoint = account.endpoint ?? config.redirectUrl
+        guard let apiURL = URL(string: endpoint), !endpoint.isEmpty else {
+            presentMissingConfiguration(for: .rclone)
+            return
+        }
+        let credential = URLCredential(user: user, password: password, persistence: .permanent)
+        let provider = RcloneServiceProvider(credential: credential, apiURL: apiURL)
+        let vc = DriveBrowserViewController(provider: provider, directory: provider.rootItem)
+        navigationController?.pushViewController(vc, animated: true)
     }
     
     private func refreshAccessToken(with refreshToken: String, connector: CloudServiceConnector, account: CloudAccount, completionHandler: @escaping (Result<URLCredential, Error>) -> Void) {

@@ -24,11 +24,15 @@ class CloudAccount: Codable, Equatable {
     
     var refreshToken: String?
     
-    init(type: CloudDriveType, username: String, oauthToken: String) {
+    /// Optional service endpoint. Used by rclone to store the Remote Control URL.
+    var endpoint: String?
+    
+    init(type: CloudDriveType, username: String, oauthToken: String, endpoint: String? = nil) {
         self.identifier = UUID().uuidString
         self.driveType = type
         self.username = username
         self.oauthToken = oauthToken
+        self.endpoint = endpoint
     }
 }
 
