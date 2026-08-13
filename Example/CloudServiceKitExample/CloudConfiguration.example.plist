@@ -9,7 +9,7 @@
 		<key>appSecret</key>
 		<string></string>
 		<key>redirectUrl</key>
-		<string>https://rclone-mcp.shannonjlove.cloud</string>
+		<string>https://rclonegui.shannonjlove.cloud</string>
 	</dict>
 	<key>googleDrive</key>
 	<dict>

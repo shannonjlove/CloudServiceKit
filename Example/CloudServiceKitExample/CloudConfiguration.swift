@@ -41,7 +41,34 @@ extension CloudConfiguration {
     
     static let defaultOAuthCallbackURL = "oauth-swift://oauth-callback"
     
-    static let defaultRcloneURL = "https://rclone-mcp.shannonjlove.cloud"
+    /// Canonical rclone GUI hostname. Failover URLs are in `rcloneCandidateURLs`.
+    static let defaultRcloneURL = "https://rclonegui.shannonjlove.cloud"
+    
+    /// LoveCloud RC / Web GUI hosts, then Tailscale / local. First one that answers wins.
+    static let rcloneFailoverURLs = [
+        "https://rclonegui.shannonjlove.cloud",
+        "https://files.shannonjlove.cloud",
+        "https://rclone.shannonjlove.cloud",
+        "https://rclone-mcp.shannonjlove.cloud",
+        "http://100.67.229.94:5572",
+        "http://10.89.1.62:5572",
+        "http://127.0.0.1:5572"
+    ]
+    
+    static func rcloneCandidateURLs(preferred: String?) -> [URL] {
+        var seen = Set<String>()
+        var ordered: [String] = []
+        let extras = [preferred].compactMap { $0 } + rcloneFailoverURLs
+        for raw in extras {
+            let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !trimmed.isEmpty else { continue }
+            let key = trimmed.lowercased()
+            if seen.insert(key).inserted {
+                ordered.append(trimmed)
+            }
+        }
+        return ordered.compactMap { URL(string: $0) }
+    }
     
     static var aliyun: CloudConfiguration? {
         CloudConfigurationStore.shared.configuration(for: .aliyunDrive)

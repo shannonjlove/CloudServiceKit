@@ -1,0 +1,21 @@
+# rclonegui — rclone Web GUI + Remote Control
+# Copy to config/rclone.conf (gitignored) or bind-mount the host rclone.conf.
+# Remotes already used on LoveCloud: koofr mounts, idrive-e2 buckets.
+
+[idrive-e2]
+type = s3
+provider = IDrive
+env_auth = false
+access_key_id = YOUR_IDRIVE_KEY
+secret_access_key = YOUR_IDRIVE_SECRET
+endpoint = YOUR_IDRIVE_ENDPOINT
+acl = private
+
+[koofr]
+type = koofr
+# token is created by: rclone config
+
+[gdrive]
+type = drive
+scope = drive
+# token is created by: rclone config

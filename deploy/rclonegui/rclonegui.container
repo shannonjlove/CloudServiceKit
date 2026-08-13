@@ -1,0 +1,19 @@
+[Unit]
+Description=rclonegui — rclone Web GUI / Remote Control (sOs)
+After=network-online.target
+
+[Container]
+Image=docker.io/rclone/rclone:latest
+ContainerName=rclonegui
+Exec=rcd --rc-web-gui --rc-web-gui-no-open-browser --rc-addr=:5572 --rc-user=rclone --rc-pass=change-me
+PublishPort=100.67.229.94:5572:5572
+Volume=/opt/rclonegui/config:/config/rclone:Z
+Volume=/opt/rclonegui/config:/root/.config/rclone:Z
+Environment=TZ=America/New_York
+
+[Service]
+Restart=always
+TimeoutStartSec=120
+
+[Install]
+WantedBy=multi-user.target

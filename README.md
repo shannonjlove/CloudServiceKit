@@ -42,7 +42,7 @@ dependencies: [
 
 ## Quick Start
 
-You can explore `CloudServiceKit` by running the example app. Open **Storage Connections** (the drive-plus button) and paste credentials for each provider. rclone is pre-wired to `https://rclone-mcp.shannonjlove.cloud`.
+You can explore `CloudServiceKit` by running the example app. Open **Storage Connections** (the drive-plus button) and paste credentials for each provider. rclonegui is configured: the app probes `rclonegui.shannonjlove.cloud`, `files.shannonjlove.cloud`, and the other LoveCloud RC hosts until one answers.
 
 OAuth app values can also be filled in `CloudConfiguration.swift`, or copied from `Example/CloudServiceKitExample/CloudConfiguration.example.plist` to `CloudConfiguration.plist` (gitignored).
 
@@ -61,7 +61,7 @@ extension CloudConfiguration {
 
 ```swift
 let credential = URLCredential(user: "rc-user", password: "rc-pass", persistence: .permanent)
-let apiURL = URL(string: "https://rclone-mcp.shannonjlove.cloud")!
+let apiURL = URL(string: "https://rclonegui.shannonjlove.cloud")!
 let provider = RcloneServiceProvider(credential: credential, apiURL: apiURL)
 let vc = DriveBrowserViewController(provider: provider, directory: provider.rootItem)
 ```
@@ -76,11 +76,13 @@ Then in the example app open **Storage Connections → rclone** and set:
 
 | Field | Value |
 | --- | --- |
-| Remote Control URL | `https://rclone-mcp.shannonjlove.cloud` or `http://127.0.0.1:5572` |
+| Remote Control URL | `https://rclonegui.shannonjlove.cloud` (failsover to files / rclone / rclone-mcp / Tailscale `:5572`) |
 | RC username | `--rc-user` (blank when using `--rc-no-auth`) |
 | RC password | `--rc-pass` (blank when using `--rc-no-auth`) |
 
 The example also allows local network HTTP (`NSAllowsLocalNetworking`) so a Tailscale or LAN rclone GUI works.
+
+If the GUI container is not running on Oracle, start it from [`deploy/rclonegui`](deploy/rclonegui/README.md) (`docker compose up -d` or the quadlet). That is the `rclonegui` unit that had been left `configured_pending`.
 
 ## Get Started
 

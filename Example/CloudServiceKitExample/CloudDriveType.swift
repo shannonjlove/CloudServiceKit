@@ -95,7 +95,7 @@ enum CloudDriveType: String, Codable, CaseIterable, Hashable {
     var configurationHelp: String {
         switch self {
         case .rclone:
-            return "Start rclone with a web GUI / RC server, then paste that URL here. Example:\n\nrclone rcd --rc-web-gui --rc-addr :5572 --rc-user USER --rc-pass PASS\n\nOn LoveCloud the RC endpoint is https://rclone-mcp.shannonjlove.cloud (and the GUI is files.shannonjlove.cloud). Username and password can be left blank when the server uses --rc-no-auth."
+            return "rclonegui is configured. Tap Find live rclone GUI to probe rclonegui.shannonjlove.cloud, files.shannonjlove.cloud, rclone.shannonjlove.cloud, rclone-mcp, then Oracle Tailscale :5572. The first host that answers is saved. Deploy the stack in deploy/rclonegui if none answer.\n\nOr start locally:\nrclone rcd --rc-web-gui --rc-addr :5572 --rc-user USER --rc-pass PASS"
         default:
             return "Create an OAuth application in the provider console. Set the redirect URL to \(CloudConfiguration.defaultOAuthCallbackURL) (already registered in Info.plist) unless the provider requires its own callback."
         }

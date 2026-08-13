@@ -92,3 +92,6 @@ iOSInjectionProject/
 # Local OAuth / rclone secrets for the example app.
 # Copy CloudConfiguration.example.plist to CloudConfiguration.plist and fill in values.
 Example/CloudServiceKitExample/CloudConfiguration.plist
+deploy/rclonegui/.env
+deploy/rclonegui/config/rclone.conf
+

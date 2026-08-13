@@ -222,26 +222,37 @@ class ViewController: UIViewController {
     
     private func connectRclone() {
         let draft = CloudConfigurationStore.shared.draft(for: .rclone)
-        guard draft.isConfigured(for: .rclone), let apiURL = URL(string: draft.redirectUrl) else {
+        let credential = URLCredential(user: draft.appId, password: draft.appSecret, persistence: .permanent)
+        let urls = CloudConfiguration.rcloneCandidateURLs(preferred: draft.redirectUrl)
+        guard !urls.isEmpty else {
             presentMissingConfiguration(for: .rclone)
             return
         }
-        let credential = URLCredential(user: draft.appId, password: draft.appSecret, persistence: .permanent)
-        let provider = RcloneServiceProvider(credential: credential, apiURL: apiURL)
-        provider.getCurrentUserInfo { [weak self] userResult in
+        RcloneServiceProvider.connectToFirstAvailable(urls: urls, credential: credential) { [weak self] result in
             guard let self = self else { return }
-            switch userResult {
-            case .success(let user):
-                let account = CloudAccount(type: .rclone,
-                                           username: draft.appId.isEmpty ? user.username : draft.appId,
-                                           oauthToken: draft.appSecret,
-                                           endpoint: draft.redirectUrl)
-                CloudAccountManager.shared.upsert(account)
-                self.applyInitialSnapshot()
-                let vc = DriveBrowserViewController(provider: provider, directory: provider.rootItem)
-                self.navigationController?.pushViewController(vc, animated: true)
+            switch result {
+            case .success(let provider):
+                var saved = draft
+                saved.redirectUrl = provider.apiURL.absoluteString
+                CloudConfigurationStore.shared.save(saved, for: .rclone)
+                provider.getCurrentUserInfo { userResult in
+                    let username: String
+                    if case .success(let user) = userResult {
+                        username = saved.appId.isEmpty ? user.username : saved.appId
+                    } else {
+                        username = saved.appId.isEmpty ? "rclone" : saved.appId
+                    }
+                    let account = CloudAccount(type: .rclone,
+                                               username: username,
+                                               oauthToken: saved.appSecret,
+                                               endpoint: saved.redirectUrl)
+                    CloudAccountManager.shared.upsert(account)
+                    self.applyInitialSnapshot()
+                    let vc = DriveBrowserViewController(provider: provider, directory: provider.rootItem)
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }
             case .failure(let error):
-                self.presentError(error, title: "Could not reach rclone")
+                self.presentError(error, title: "rclone GUI did not answer")
             }
         }
     }
@@ -331,15 +342,23 @@ class ViewController: UIViewController {
         let config = CloudConfigurationStore.shared.draft(for: .rclone)
         let user = config.appId.isEmpty ? account.username : config.appId
         let password = config.appSecret.isEmpty ? account.oauthToken : config.appSecret
-        let endpoint = account.endpoint ?? config.redirectUrl
-        guard let apiURL = URL(string: endpoint), !endpoint.isEmpty else {
-            presentMissingConfiguration(for: .rclone)
-            return
-        }
         let credential = URLCredential(user: user, password: password, persistence: .permanent)
-        let provider = RcloneServiceProvider(credential: credential, apiURL: apiURL)
-        let vc = DriveBrowserViewController(provider: provider, directory: provider.rootItem)
-        navigationController?.pushViewController(vc, animated: true)
+        let urls = CloudConfiguration.rcloneCandidateURLs(preferred: account.endpoint ?? config.redirectUrl)
+        RcloneServiceProvider.connectToFirstAvailable(urls: urls, credential: credential) { [weak self] result in
+            guard let self = self else { return }
+            switch result {
+            case .success(let provider):
+                account.endpoint = provider.apiURL.absoluteString
+                var saved = config
+                saved.redirectUrl = provider.apiURL.absoluteString
+                CloudConfigurationStore.shared.save(saved, for: .rclone)
+                CloudAccountManager.shared.upsert(account)
+                let vc = DriveBrowserViewController(provider: provider, directory: provider.rootItem)
+                self.navigationController?.pushViewController(vc, animated: true)
+            case .failure(let error):
+                self.presentError(error, title: "rclone GUI did not answer")
+            }
+        }
     }
     
     private func refreshAccessToken(with refreshToken: String, connector: CloudServiceConnector, account: CloudAccount, completionHandler: @escaping (Result<URLCredential, Error>) -> Void) {

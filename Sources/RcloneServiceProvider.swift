@@ -74,6 +74,36 @@ public class RcloneServiceProvider: CloudServiceProvider {
         self.apiURL = apiURL
     }
 
+    /// Tries each RC URL in order and returns the first provider that answers `core/version`.
+    public static func connectToFirstAvailable(urls: [URL],
+                                               credential: URLCredential?,
+                                               completion: @escaping (Result<RcloneServiceProvider, Error>) -> Void) {
+        tryNextAvailable(urls: urls, credential: credential, lastError: nil, completion: completion)
+    }
+
+    private static func tryNextAvailable(urls: [URL],
+                                         credential: URLCredential?,
+                                         lastError: Error?,
+                                         completion: @escaping (Result<RcloneServiceProvider, Error>) -> Void) {
+        guard let url = urls.first else {
+            let error = lastError ?? CloudServiceError.serviceError(503, "No rclone Remote Control endpoint responded")
+            completion(.failure(error))
+            return
+        }
+        let provider = RcloneServiceProvider(credential: credential, apiURL: url)
+        provider.getCurrentUserInfo { result in
+            switch result {
+            case .success:
+                completion(.success(provider))
+            case .failure(let error):
+                tryNextAvailable(urls: Array(urls.dropFirst()),
+                                 credential: credential,
+                                 lastError: error,
+                                 completion: completion)
+            }
+        }
+    }
+
     public func attributesOfItem(_ item: CloudItem, completion: @escaping (Result<CloudItem, Error>) -> Void) {
         guard let path = RclonePath.parse(item.path) else {
             completion(.success(rootItem))

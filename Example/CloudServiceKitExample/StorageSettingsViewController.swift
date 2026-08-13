@@ -4,6 +4,7 @@
 //
 
 import UIKit
+import CloudServiceKit
 
 /// Lists every cloud / rclone remote and lets you enter the credentials the
 /// Drive Browser needs to connect.
@@ -56,7 +57,7 @@ extension StorageSettingsViewController: UITableViewDataSource, UITableViewDeleg
     
     func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
         if section == 0 {
-            return "Connect this app to an rclone Remote Control server (rclone rcd or rclone Web GUI). The RC server already holds your remotes — Google Drive, IDrive e2, Koofr, S3, and any other rclone storage."
+            return "rclonegui is configured — not pending. The app probes rclonegui, files, rclone, rclone-mcp, then the Oracle Tailscale RC until one answers, and stores the live URL."
         }
         return "Register an app with each provider, then paste the client id, secret, and redirect URL. The example URL scheme is oauth-swift://oauth-callback."
     }
@@ -68,8 +69,13 @@ extension StorageSettingsViewController: UITableViewDataSource, UITableViewDeleg
         content.image = drive.image
         content.text = drive.title
         let configured = CloudConfigurationStore.shared.configuration(for: drive) != nil
-        content.secondaryText = configured ? "Connected — tap to edit" : "Not configured — tap to add credentials"
-        content.secondaryTextProperties.color = configured ? .secondaryLabel : .systemOrange
+        if drive == .rclone && configured {
+            content.secondaryText = "Configured — tap rclone on Home to connect remotes"
+            content.secondaryTextProperties.color = .systemGreen
+        } else {
+            content.secondaryText = configured ? "Connected — tap to edit" : "Not configured — tap to add credentials"
+            content.secondaryTextProperties.color = configured ? .secondaryLabel : .systemOrange
+        }
         cell.contentConfiguration = content
         cell.accessoryType = .disclosureIndicator
         return cell
@@ -141,6 +147,14 @@ final class CloudProviderConfigViewController: UIViewController {
         help.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(help)
         
+        var extraViews: [UIView] = []
+        if drive == .rclone {
+            let test = UIButton(type: .system)
+            test.setTitle("Find live rclone GUI", for: .normal)
+            test.addTarget(self, action: #selector(probeRclone), for: .touchUpInside)
+            extraViews.append(test)
+        }
+        
         NSLayoutConstraint.activate([
             stack.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
             stack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
@@ -149,6 +163,15 @@ final class CloudProviderConfigViewController: UIViewController {
             help.leadingAnchor.constraint(equalTo: stack.leadingAnchor),
             help.trailingAnchor.constraint(equalTo: stack.trailingAnchor)
         ])
+        
+        if let test = extraViews.first {
+            test.translatesAutoresizingMaskIntoConstraints = false
+            view.addSubview(test)
+            NSLayoutConstraint.activate([
+                test.topAnchor.constraint(equalTo: help.bottomAnchor, constant: 16),
+                test.leadingAnchor.constraint(equalTo: help.leadingAnchor)
+            ])
+        }
     }
     
     @objc private func save() {
@@ -161,7 +184,7 @@ final class CloudProviderConfigViewController: UIViewController {
             let alert = UIAlertController(
                 title: "Missing fields",
                 message: drive == .rclone
-                    ? "Enter the rclone Remote Control URL (for example https://rclone-mcp.shannonjlove.cloud or http://127.0.0.1:5572)."
+                    ? "Enter the rclone GUI URL (https://rclonegui.shannonjlove.cloud) or leave the default — the app failovers across LoveCloud RC hosts."
                     : "Enter app id, app secret, and redirect URL.",
                 preferredStyle: .alert
             )
@@ -171,6 +194,43 @@ final class CloudProviderConfigViewController: UIViewController {
         }
         CloudConfigurationStore.shared.save(config, for: drive)
         navigationController?.popViewController(animated: true)
+    }
+    
+    @objc private func probeRclone() {
+        let credential = URLCredential(
+            user: appIdField.text ?? "",
+            password: appSecretField.text ?? "",
+            persistence: .permanent
+        )
+        let preferred = redirectField.text?.trimmingCharacters(in: .whitespacesAndNewlines)
+        let urls = CloudConfiguration.rcloneCandidateURLs(preferred: preferred)
+        RcloneServiceProvider.connectToFirstAvailable(urls: urls, credential: credential) { [weak self] result in
+            guard let self = self else { return }
+            switch result {
+            case .success(let provider):
+                self.redirectField.text = provider.apiURL.absoluteString
+                var config = CloudConfigurationStore.shared.draft(for: .rclone)
+                config.appId = self.appIdField.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+                config.appSecret = self.appSecretField.text ?? ""
+                config.redirectUrl = provider.apiURL.absoluteString
+                CloudConfigurationStore.shared.save(config, for: .rclone)
+                let alert = UIAlertController(
+                    title: "rclone GUI is live",
+                    message: provider.apiURL.absoluteString,
+                    preferredStyle: .alert
+                )
+                alert.addAction(UIAlertAction(title: "OK", style: .default))
+                self.present(alert, animated: true)
+            case .failure(let error):
+                let alert = UIAlertController(
+                    title: "No RC endpoint answered",
+                    message: error.localizedDescription + "\n\nOn Oracle run deploy/rclonegui (docker compose up -d) so the rclonegui container is no longer pending.",
+                    preferredStyle: .alert
+                )
+                alert.addAction(UIAlertAction(title: "OK", style: .default))
+                self.present(alert, animated: true)
+            }
+        }
     }
     
     private func configure(_ field: UITextField, text: String, placeholder: String, secure: Bool) {
