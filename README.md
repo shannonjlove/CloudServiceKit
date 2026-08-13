@@ -12,6 +12,16 @@ Easy to integrate cloud service using Oauth2. Supported platforms:
 - [x] [115](https://www.yuque.com/115yun/open)
 - [x] [123](https://123yunpan.yuque.com/org-wiki-123yunpan-muaork/cr6ced)
 
+## AI Email Agent Widget
+
+The Example app includes an **AI Email Agent** home-screen widget backed by [AgentMail](https://www.agentmail.to).
+
+1. Run the Example app and open **Email Agent** from the navigation bar.
+2. Save your AgentMail API key and inbox ID.
+3. Add the **AI Email Agent** widget from the iOS Home Screen widget gallery.
+
+See [`Example/EmailAgentWidget/README.md`](Example/EmailAgentWidget/README.md) for architecture and signing notes.
+
 ## Requirements
 
 - Swift 5.0 +

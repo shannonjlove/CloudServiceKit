@@ -40,9 +40,20 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         navigationItem.title = "CloudServiceKit"
+        navigationItem.rightBarButtonItem = UIBarButtonItem(
+            title: "Email Agent",
+            style: .plain,
+            target: self,
+            action: #selector(openEmailAgentSettings)
+        )
         setupCollectionView()
         setupDataSource()
         applyInitialSnapshot()
+    }
+
+    @objc private func openEmailAgentSettings() {
+        let settings = EmailAgentSettingsViewController()
+        navigationController?.pushViewController(settings, animated: true)
     }
 
     private func connect(_ drive: CloudDriveType) {
