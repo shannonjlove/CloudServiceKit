@@ -19,8 +19,44 @@
 		A3DE793F26F5D47F0058E54F /* CloudDriveType.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3DE793E26F5D47F0058E54F /* CloudDriveType.swift */; };
 		A3DE794126F5DD580058E54F /* DriveBrowserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3DE794026F5DD580058E54F /* DriveBrowserViewController.swift */; };
 		A3F880F62702BCB20054D5D6 /* CloudConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3F880F52702BCB20054D5D6 /* CloudConfiguration.swift */; };
+		EAE100112E9A0001000E0011 /* EmailAgentSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAE100102E9A0001000E0010 /* EmailAgentSettingsViewController.swift */; };
+		EAE100122E9A0001000E0012 /* AgentMailModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAE100012E9A0001000E0001 /* AgentMailModels.swift */; };
+		EAE100132E9A0001000E0013 /* AgentCredentialsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAE100022E9A0001000E0002 /* AgentCredentialsStore.swift */; };
+		EAE100142E9A0001000E0014 /* AgentMailClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAE100032E9A0001000E0003 /* AgentMailClient.swift */; };
+		EAE100182E9A0001000E0018 /* AgentMailModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAE100012E9A0001000E0001 /* AgentMailModels.swift */; };
+		EAE100192E9A0001000E0019 /* AgentCredentialsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAE100022E9A0001000E0002 /* AgentCredentialsStore.swift */; };
+		EAE1001A2E9A0001000E001A /* AgentMailClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAE100032E9A0001000E0003 /* AgentMailClient.swift */; };
+		EAE1001B2E9A0001000E001B /* EmailAgentWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAE100042E9A0001000E0004 /* EmailAgentWidgetBundle.swift */; };
+		EAE1001C2E9A0001000E001C /* EmailAgentTimelineProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAE100052E9A0001000E0005 /* EmailAgentTimelineProvider.swift */; };
+		EAE1001D2E9A0001000E001D /* EmailAgentWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAE100062E9A0001000E0006 /* EmailAgentWidget.swift */; };
+		EAE1001E2E9A0001000E001E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EAE100072E9A0001000E0007 /* Assets.xcassets */; };
+		EAE1001F2E9A0001000E001F /* EmailAgentWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = EAE100092E9A0001000E0009 /* EmailAgentWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		FAB8E0212C623BEE00766CEC /* CustomOAuthWebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAB8E0202C623BEE00766CEC /* CustomOAuthWebViewController.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		EAE100202E9A0001000E0020 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A3DE791F26F5D3CD0058E54F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = EAE1000A2E9A0001000E000A;
+			remoteInfo = EmailAgentWidget;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		EAE100212E9A0001000E0021 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				EAE1001F2E9A0001000E001F /* EmailAgentWidget.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		18AE21612D61F544009D0A48 /* Drive115QRCodeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Drive115QRCodeViewController.swift; sourceTree = "<group>"; };
@@ -38,6 +74,18 @@
 		A3DE794026F5DD580058E54F /* DriveBrowserViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DriveBrowserViewController.swift; sourceTree = "<group>"; };
 		A3F880F52702BCB20054D5D6 /* CloudConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudConfiguration.swift; sourceTree = "<group>"; };
 		B7E64412EFC2817CB9FC2CC0 /* Pods-CloudServiceKitExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CloudServiceKitExample.release.xcconfig"; path = "Target Support Files/Pods-CloudServiceKitExample/Pods-CloudServiceKitExample.release.xcconfig"; sourceTree = "<group>"; };
+		EAE100012E9A0001000E0001 /* AgentMailModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentMailModels.swift; sourceTree = "<group>"; };
+		EAE100022E9A0001000E0002 /* AgentCredentialsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentCredentialsStore.swift; sourceTree = "<group>"; };
+		EAE100032E9A0001000E0003 /* AgentMailClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentMailClient.swift; sourceTree = "<group>"; };
+		EAE100042E9A0001000E0004 /* EmailAgentWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailAgentWidgetBundle.swift; sourceTree = "<group>"; };
+		EAE100052E9A0001000E0005 /* EmailAgentTimelineProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailAgentTimelineProvider.swift; sourceTree = "<group>"; };
+		EAE100062E9A0001000E0006 /* EmailAgentWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailAgentWidget.swift; sourceTree = "<group>"; };
+		EAE100072E9A0001000E0007 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		EAE100082E9A0001000E0008 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		EAE100092E9A0001000E0009 /* EmailAgentWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = EmailAgentWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		EAE1000B2E9A0001000E000B /* EmailAgentWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = EmailAgentWidget.entitlements; sourceTree = "<group>"; };
+		EAE1000C2E9A0001000E000C /* CloudServiceKitExample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CloudServiceKitExample.entitlements; sourceTree = "<group>"; };
+		EAE100102E9A0001000E0010 /* EmailAgentSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailAgentSettingsViewController.swift; sourceTree = "<group>"; };
 		F0D183B47B5AC5BB4D268D93 /* Pods_CloudServiceKitExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CloudServiceKitExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FAB8E0202C623BEE00766CEC /* CustomOAuthWebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomOAuthWebViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -48,6 +96,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				3F06A64A3E8D85637D072A8D /* Pods_CloudServiceKitExample.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EAE1000D2E9A0001000E000D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -75,6 +130,8 @@
 			isa = PBXGroup;
 			children = (
 				A3DE792926F5D3CD0058E54F /* CloudServiceKitExample */,
+				EAE1000E2E9A0001000E000E /* Shared */,
+				EAE1000F2E9A0001000E000F /* EmailAgentWidget */,
 				A3DE792826F5D3CD0058E54F /* Products */,
 				3B5CF8834362DC3B49CEAC93 /* Pods */,
 				70D626447404464AE9DEBD04 /* Frameworks */,
@@ -85,6 +142,7 @@
 			isa = PBXGroup;
 			children = (
 				A3DE792726F5D3CD0058E54F /* CloudServiceKitExample.app */,
+				EAE100092E9A0001000E0009 /* EmailAgentWidget.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -95,6 +153,7 @@
 				A3DE792A26F5D3CD0058E54F /* AppDelegate.swift */,
 				A3DE792C26F5D3CD0058E54F /* SceneDelegate.swift */,
 				A3DE792E26F5D3CD0058E54F /* ViewController.swift */,
+				EAE100102E9A0001000E0010 /* EmailAgentSettingsViewController.swift */,
 				A3DE794026F5DD580058E54F /* DriveBrowserViewController.swift */,
 				18AE21612D61F544009D0A48 /* Drive115QRCodeViewController.swift */,
 				A3DE793E26F5D47F0058E54F /* CloudDriveType.swift */,
@@ -105,8 +164,40 @@
 				A3DE793326F5D3D10058E54F /* Assets.xcassets */,
 				A3DE793526F5D3D10058E54F /* LaunchScreen.storyboard */,
 				A3DE793826F5D3D10058E54F /* Info.plist */,
+				EAE1000C2E9A0001000E000C /* CloudServiceKitExample.entitlements */,
 			);
 			path = CloudServiceKitExample;
+			sourceTree = "<group>";
+		};
+		EAE1000E2E9A0001000E000E /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				EAE100152E9A0001000E0015 /* AgentMail */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		EAE1000F2E9A0001000E000F /* EmailAgentWidget */ = {
+			isa = PBXGroup;
+			children = (
+				EAE100042E9A0001000E0004 /* EmailAgentWidgetBundle.swift */,
+				EAE100052E9A0001000E0005 /* EmailAgentTimelineProvider.swift */,
+				EAE100062E9A0001000E0006 /* EmailAgentWidget.swift */,
+				EAE100072E9A0001000E0007 /* Assets.xcassets */,
+				EAE100082E9A0001000E0008 /* Info.plist */,
+				EAE1000B2E9A0001000E000B /* EmailAgentWidget.entitlements */,
+			);
+			path = EmailAgentWidget;
+			sourceTree = "<group>";
+		};
+		EAE100152E9A0001000E0015 /* AgentMail */ = {
+			isa = PBXGroup;
+			children = (
+				EAE100012E9A0001000E0001 /* AgentMailModels.swift */,
+				EAE100022E9A0001000E0002 /* AgentCredentialsStore.swift */,
+				EAE100032E9A0001000E0003 /* AgentMailClient.swift */,
+			);
+			path = AgentMail;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -121,15 +212,34 @@
 				A3DE792426F5D3CD0058E54F /* Frameworks */,
 				A3DE792526F5D3CD0058E54F /* Resources */,
 				5C4D70E2A59553A7FD3495AF /* [CP] Embed Pods Frameworks */,
+				EAE100212E9A0001000E0021 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				EAE100222E9A0001000E0022 /* PBXTargetDependency */,
 			);
 			name = CloudServiceKitExample;
 			productName = CloudServiceKitExample;
 			productReference = A3DE792726F5D3CD0058E54F /* CloudServiceKitExample.app */;
 			productType = "com.apple.product-type.application";
+		};
+		EAE1000A2E9A0001000E000A /* EmailAgentWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EAE100232E9A0001000E0023 /* Build configuration list for PBXNativeTarget "EmailAgentWidget" */;
+			buildPhases = (
+				EAE100162E9A0001000E0016 /* Sources */,
+				EAE1000D2E9A0001000E000D /* Frameworks */,
+				EAE100172E9A0001000E0017 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = EmailAgentWidget;
+			productName = EmailAgentWidget;
+			productReference = EAE100092E9A0001000E0009 /* EmailAgentWidget.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -137,11 +247,14 @@
 		A3DE791F26F5D3CD0058E54F /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1250;
+				LastSwiftUpdateCheck = 1500;
 				LastUpgradeCheck = 1250;
 				TargetAttributes = {
 					A3DE792626F5D3CD0058E54F = {
 						CreatedOnToolsVersion = 12.5.1;
+					};
+					EAE1000A2E9A0001000E000A = {
+						CreatedOnToolsVersion = 15.0;
 					};
 				};
 			};
@@ -159,6 +272,7 @@
 			projectRoot = "";
 			targets = (
 				A3DE792626F5D3CD0058E54F /* CloudServiceKitExample */,
+				EAE1000A2E9A0001000E000A /* EmailAgentWidget */,
 			);
 		};
 /* End PBXProject section */
@@ -171,6 +285,14 @@
 				A3DE793726F5D3D10058E54F /* LaunchScreen.storyboard in Resources */,
 				A3DE793426F5D3D10058E54F /* Assets.xcassets in Resources */,
 				A3DE793226F5D3CD0058E54F /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EAE100172E9A0001000E0017 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EAE1001E2E9A0001000E001E /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -232,10 +354,35 @@
 				FAB8E0212C623BEE00766CEC /* CustomOAuthWebViewController.swift in Sources */,
 				A3C3F6CE270475250019A9D6 /* CloudAccountManager.swift in Sources */,
 				18AE21622D61F54C009D0A48 /* Drive115QRCodeViewController.swift in Sources */,
+				EAE100112E9A0001000E0011 /* EmailAgentSettingsViewController.swift in Sources */,
+				EAE100122E9A0001000E0012 /* AgentMailModels.swift in Sources */,
+				EAE100132E9A0001000E0013 /* AgentCredentialsStore.swift in Sources */,
+				EAE100142E9A0001000E0014 /* AgentMailClient.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EAE100162E9A0001000E0016 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EAE1001B2E9A0001000E001B /* EmailAgentWidgetBundle.swift in Sources */,
+				EAE1001C2E9A0001000E001C /* EmailAgentTimelineProvider.swift in Sources */,
+				EAE1001D2E9A0001000E001D /* EmailAgentWidget.swift in Sources */,
+				EAE100182E9A0001000E0018 /* AgentMailModels.swift in Sources */,
+				EAE100192E9A0001000E0019 /* AgentCredentialsStore.swift in Sources */,
+				EAE1001A2E9A0001000E001A /* AgentMailClient.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		EAE100222E9A0001000E0022 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = EAE1000A2E9A0001000E000A /* EmailAgentWidget */;
+			targetProxy = EAE100202E9A0001000E0020 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		A3DE793026F5D3CD0058E54F /* Main.storyboard */ = {
@@ -379,6 +526,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = CloudServiceKitExample/CloudServiceKitExample.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = CloudServiceKitExample/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
@@ -399,6 +547,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = CloudServiceKitExample/CloudServiceKitExample.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = CloudServiceKitExample/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
@@ -408,6 +557,58 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = me.shuifeng.CloudServiceKitExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		EAE100242E9A0001000E0024 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = EmailAgentWidget/EmailAgentWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = EmailAgentWidget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = me.shuifeng.CloudServiceKitExample.EmailAgentWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		EAE100252E9A0001000E0025 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = EmailAgentWidget/EmailAgentWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = EmailAgentWidget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = me.shuifeng.CloudServiceKitExample.EmailAgentWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -430,6 +631,15 @@
 			buildConfigurations = (
 				A3DE793C26F5D3D10058E54F /* Debug */,
 				A3DE793D26F5D3D10058E54F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EAE100232E9A0001000E0023 /* Build configuration list for PBXNativeTarget "EmailAgentWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EAE100242E9A0001000E0024 /* Debug */,
+				EAE100252E9A0001000E0025 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
