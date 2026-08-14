@@ -40,6 +40,12 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         navigationItem.title = "CloudServiceKit"
+        navigationItem.leftBarButtonItem = UIBarButtonItem(
+            title: "Email Agent",
+            style: .plain,
+            target: self,
+            action: #selector(openEmailAgentSettings)
+        )
         navigationItem.rightBarButtonItem = UIBarButtonItem(
             image: UIImage(systemName: "externaldrive.badge.plus"),
             style: .plain,
@@ -64,6 +70,11 @@ class ViewController: UIViewController {
     
     @objc private func handleConfigurationChange() {
         applyInitialSnapshot()
+    }
+
+    @objc private func openEmailAgentSettings() {
+        let settings = EmailAgentSettingsViewController()
+        navigationController?.pushViewController(settings, animated: true)
     }
 
     private func connect(_ drive: CloudDriveType) {

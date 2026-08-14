@@ -18,6 +18,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let _ = (scene as? UIWindowScene) else { return }
+        if let url = connectionOptions.urlContexts.first?.url {
+            handleIncomingURL(url)
+        }
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
@@ -53,8 +56,33 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let url = URLContexts.first?.url else {
             return
         }
+        handleIncomingURL(url)
+    }
+
+    private func handleIncomingURL(_ url: URL) {
+        if url.scheme == AgentAppGroup.deepLinkScheme {
+            openEmailAgentSettings()
+            return
+        }
         if url.host == "oauth-callback" {
             OAuthSwift.handle(url: url)
+        }
+    }
+
+    private func openEmailAgentSettings() {
+        var current = window?.rootViewController
+        while let presented = current?.presentedViewController {
+            current = presented
+        }
+
+        let settings = EmailAgentSettingsViewController()
+        if let nav = current as? UINavigationController {
+            nav.pushViewController(settings, animated: true)
+        } else if let nav = current?.navigationController {
+            nav.pushViewController(settings, animated: true)
+        } else if let current {
+            let nav = UINavigationController(rootViewController: settings)
+            current.present(nav, animated: true)
         }
     }
     
