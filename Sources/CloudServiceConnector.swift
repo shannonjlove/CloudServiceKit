@@ -465,3 +465,27 @@ public class Drive123Connector: CloudServiceConnector {
     }
 }
 
+// MARK: - RcloneConnector
+
+/// Connects to an rclone Remote Control / Web GUI server with HTTP basic auth.
+/// OAuth is not used. Call `RcloneServiceProvider` directly after verifying the RC URL.
+public class RcloneConnector: CloudServiceConnector {
+    
+    public override var authorizeUrl: String {
+        return ""
+    }
+    
+    public override var accessTokenUrl: String {
+        return ""
+    }
+    
+    public override func connect(viewController: UIViewController,
+                                 completion: @escaping (Result<OAuthSwift.TokenSuccess, Error>) -> Void) {
+        completion(.failure(CloudServiceError.unsupported))
+    }
+    
+    public override func renewToken(with refreshToken: String, completion: @escaping (Result<OAuthSwift.TokenSuccess, Error>) -> Void) {
+        completion(.failure(CloudServiceError.unsupported))
+    }
+}
+

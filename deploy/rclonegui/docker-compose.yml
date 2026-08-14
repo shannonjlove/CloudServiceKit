@@ -1,0 +1,25 @@
+services:
+  rclonegui:
+    image: rclone/rclone:latest
+    container_name: rclonegui
+    restart: unless-stopped
+    command:
+      - rcd
+      - --rc-web-gui
+      - --rc-web-gui-no-open-browser
+      - --rc-addr=:5572
+      - --rc-user=${RCLONE_RC_USER:-rclone}
+      - --rc-pass=${RCLONE_RC_PASS:?set RCLONE_RC_PASS in .env}
+    ports:
+      - "5572:5572"
+    volumes:
+      - ${RCLONE_CONFIG_DIR:-./config}:/config/rclone
+      - ${RCLONE_CONFIG_DIR:-./config}:/root/.config/rclone
+    environment:
+      TZ: America/New_York
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.rclonegui.rule=Host(`rclonegui.shannonjlove.cloud`) || Host(`files.shannonjlove.cloud`)
+      - traefik.http.routers.rclonegui.tls=true
+      - traefik.http.routers.rclonegui.tls.certresolver=letsencrypt
+      - traefik.http.services.rclonegui.loadbalancer.server.port=5572

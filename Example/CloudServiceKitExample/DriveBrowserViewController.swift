@@ -80,7 +80,9 @@ extension DriveBrowserViewController {
                 snapshot.appendItems(items)
                 self.dataSource.apply(snapshot, animatingDifferences: false)
             case .failure(let error):
-                print(error)
+                let alert = UIAlertController(title: "Could not load folder", message: error.localizedDescription, preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "OK", style: .default))
+                self.present(alert, animated: true)
             }
         }
     }
